@@ -1,123 +1,152 @@
 ﻿#include "SubwayDataManager.h"
 #include "SubwayCSVLoader.h"
+
 #include <queue>
 
 #pragma region 초기화
 bool SubwayDataManager::InitializeSubwayData()
-{   
+{
     // CSVLoaer 객체 생성 및 CSV 읽어오기
     SubwayCSVLoader loader;
     subwayDataList = loader.LoadCSV("Data/SubwayData.csv");
-    if(subwayDataList.empty()) return false;
+    if (subwayDataList.empty()) return false;
 
-    BuildBFSData();
+    BuildGraph();
 
     return true;
 }
-void SubwayDataManager::BuildBFSData()
+void SubwayDataManager::BuildGraph()
 {
+    stationGraph.clear();
     for (const SubwayData& data : subwayDataList)
     {
-        // BFS용 데이터 생성
         // from → to 등록
-        StationConnectionData fromConnect;
+        StationEdge fromConnect;
         fromConnect.stationName = data.toStationName;
         fromConnect.line = data.line;
         fromConnect.timeToSec = data.timeToSec;
 
         // 벡터 등록
-        stationConnectionDataMap[data.fromStationName].push_back(fromConnect);
+        stationGraph[data.fromStationName].push_back(fromConnect);
 
         // to → from 등록
-        StationConnectionData toConnect;
+        StationEdge toConnect;
         toConnect.stationName = data.fromStationName;
         toConnect.line = data.line;
         toConnect.timeToSec = data.timeToSec;
 
         // 벡터 등록
-        stationConnectionDataMap[data.toStationName].push_back(toConnect);
+        stationGraph[data.toStationName].push_back(toConnect);
     }
 }
 #pragma endregion
 // 데이터 조회
 bool SubwayDataManager::HasStation(const std::string& station)
 {
-    for (const SubwayData& data : subwayDataList)
-    {
-        if (data.fromStationName == station || data.toStationName == station) return true;
-    }
-    return false;
+    return stationGraph.find(station) != stationGraph.end();
 }
 
-PathResult SubwayDataManager::FindPathBFS(const std::string& startStation, const std::string& endStation)
+// 다익스트라 알고리즘을 통해 가중치에 따른 최소 경로 찾기
+RouteResult SubwayDataManager::FindShortRoute(const std::string& startStation, const std::string& endStation)
 {
-    // 반환 결과
-    PathResult bfsResult;
-    bfsResult.totalTime = 0;
-    bfsResult.route.clear();
+    // 최종 반환 구조체
+    RouteResult result;
+    // 역 별 최소 소요 시간을 담을 map
+    std::map<std::string, int> subwayTimeData;
+    // 방문 여부를 확인하기 위한 map
+    std::map<std::string, bool> visitedStation;
 
-    // 탐색할 역 모음
-    std::queue<std::string> stationQueue;
-    // 출발지부터 얼마나 걸리는지
-    std::map<std::string, int> travelTimes;
-    // 이전 루트
+    // 이전 위치 저장
     std::map<std::string, std::string> prevStations;
-    // 호선 확인
-    std::map<std::string, int> prevLines;
+    // 이전 호선
+    std::map<std::string, int> prevLine;
 
-    // 출발지를 큐에 넣기
-    stationQueue.push(startStation);
-    // 거리 설정
-    travelTimes[startStation] = 0;
-    // 큐가 빌때까지 반복 
-    while (!stationQueue.empty())
+    // 전체 map을 INF로 초기화
+    for (const auto& data : stationGraph)
     {
-        std::string currentStation = stationQueue.front();
-        stationQueue.pop();
-        // 목적지 확인
-        if (currentStation == endStation)
-        {
-            // 결과를 저장해서 반환
-            bfsResult.totalTime = travelTimes[currentStation];
-            // 경로 복원
-            std::string routeStation = endStation;
-            // 출발지가 아닐때
-            while (routeStation != startStation)
-            {
-                // 루트를 거슬러가며 추가
-                bfsResult.route.push_back(routeStation);
-                routeStation = prevStations[routeStation];
-            }
-            bfsResult.route.push_back(startStation);
-            // 역순으로 저장되어있기에 복구
-            std::reverse(bfsResult.route.begin(), bfsResult.route.end());
-            // 호선 확인
-            for (int i = 1; i < bfsResult.route.size() - 1; i++)
-            {
-                // 현재 역과 다음역 호선 비교
-                std::string station = bfsResult.route[i];
-                std::string nextStation = bfsResult.route[i + 1];
-                // 호선이 다르면 현재역이 환승지역
-                if(prevLines[station] != prevLines[nextStation])bfsResult.transferStations.push_back(station);
-            }
-            return bfsResult;
-        }
-        // map을 순회하며 다음 역을 확인
-        for (const StationConnectionData& nextStation : stationConnectionDataMap[currentStation])
-        {
-            // 이미 있는 역이라면 제외
-            if(travelTimes.find(nextStation.stationName) != travelTimes.end()) continue;
-            // 새로 등록하고 시간을 업데이트
-            travelTimes[nextStation.stationName] = travelTimes[currentStation] + nextStation.timeToSec;
-           
-            stationQueue.push(nextStation.stationName);
-            // 이전 역 저장
-            prevStations[nextStation.stationName] = currentStation;
-            prevLines[nextStation.stationName] = nextStation.line;
-        }
+        subwayTimeData[data.first] = std::numeric_limits<int>::max();
+        visitedStation[data.first] = false;
     }
 
-    return bfsResult;
+    // 현재 위치 및 최소 시간
+    std::string currentStationName;
+    int minTime;
+
+    // 출발지를 확인하고 소요시간을 0으로 변경
+    subwayTimeData[startStation] = 0;
+
+    for (int i = 0; i < stationGraph.size(); i++)
+    {
+        currentStationName.clear();
+        // 최소 시간
+        minTime = std::numeric_limits<int>::max();
+
+        for (const auto& data : stationGraph)
+        {
+            // 방문했던 곳이라면 패스
+            if (visitedStation[data.first]) continue;
+            // 현재역의 시간이 저장된 시간 보다 작다면
+            if (subwayTimeData[data.first] < minTime)
+            {
+                // 최소시간을 갱신
+                minTime = subwayTimeData[data.first];
+                currentStationName = data.first;
+            }
+
+        }
+        // 탐색할 수 있는 역이 없는 경우
+        if (currentStationName.empty()) break;
+        // 방문 처리
+        visitedStation[currentStationName] = true;
+        // 목적지인 경우
+        if (currentStationName == endStation) break;
+        // 연결된 역 시간 갱신
+        for (const StationEdge& edge : stationGraph.at(currentStationName))
+        {
+            // 다음 역까지의 시간 계산
+            int time = subwayTimeData[currentStationName] + edge.timeToSec;
+            // 원래 시간과 계산된 시간 비교
+            if (time < subwayTimeData[edge.stationName])
+            {
+                // 다음역의 최소시간 갱신
+                subwayTimeData[edge.stationName] = time;
+
+                // 현재 위치 저장
+                prevStations[edge.stationName] = currentStationName;
+
+                // 현재 호선 저장
+                prevLine[edge.stationName] = edge.line;
+            }
+        }
+    }
+    // 경로 복원
+    std::string routeStation = endStation;
+    // 출발지가 아니라면 
+    while (routeStation != startStation)
+    {
+        // 경로 추가
+        result.route.push_back(routeStation);
+        routeStation = prevStations[routeStation];
+    }
+    // 출발지 추가
+    result.route.push_back(startStation);
+    // 도착 -> 출발 경로를 반대로 
+    std::reverse(result.route.begin(), result.route.end());
+
+    // 환승역 찾기
+    for (int i = 1; i < result.route.size() - 1; i++)
+    {
+        std::string station = result.route[i];
+        std::string nextStation = result.route[i + 1];
+
+        if(prevLine[station] != prevLine[nextStation])result.transferStations.push_back(station);
+    }
+
+    // 최종 시간 대입
+    result.totalTime = subwayTimeData[endStation];
+    return result;
 }
+
+
 
 

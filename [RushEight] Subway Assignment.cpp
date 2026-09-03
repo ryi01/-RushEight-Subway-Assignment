@@ -31,7 +31,7 @@ std::string InputStation(SubwayDataManager& manager, const std::string& message)
 #pragma endregion
 
 #pragma region 출력 관련
-void OutputRoute(const PathResult& result)
+void OutputRoute(const RouteResult& result)
 {
     std::cout << "이동 경로 : ";
     for (int i = 0; i < result.route.size(); i++)
@@ -43,7 +43,7 @@ void OutputRoute(const PathResult& result)
     }
     std::cout << std::endl;
 }
-void OutputTime(const PathResult& result)
+void OutputTime(const RouteResult& result)
 {
     std::cout << "총 소요 시간 : " << result.totalTime / 60 << "분 " << result.totalTime % 60 << "초" << std::endl;
 }
@@ -81,7 +81,7 @@ int main()
     // 출발역 -> 도착역 출력
     std::cout << "[탐색 결과] , " << startStation << " -> " << endStation << "\n";
     // 이동 경로 출력
-    PathResult result = dataManager.FindPathBFS(startStation, endStation);
+    RouteResult result = dataManager.FindShortRoute(startStation, endStation);
     OutputRoute(result);
     OutputTime(result);
 #pragma endregion
