@@ -11,5 +11,13 @@ bool SubwayDataManager::InitializeSubwayData()
 
     return true;
 }
+bool SubwayDataManager::HasStation(const std::string& station)
+{
+    for (const SubwayData& data : subwayDataList)
+    {
+        if(data.fromStationName == station || data.toStationName == station) return true;
+    }
+    return false;
+}
 #pragma endregion
 
