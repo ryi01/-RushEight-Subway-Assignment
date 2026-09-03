@@ -8,10 +8,10 @@ struct SubwayData
     int line;
 
     // 출발지
-    std::string toStationName;
+    std::string fromStationName;
 
     // 도착지
-    std::string fromStationName;
+    std::string toStationName;
 
     // 시간 => 초로 저장
     int timeToSec;
