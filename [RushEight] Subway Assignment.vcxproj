@@ -133,6 +133,8 @@
     <ClCompile Include="[RushEight] Subway Assignment.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RouteResult.h" />
+    <ClInclude Include="StationEdge.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="SubwayCSVLoader.h" />
     <ClInclude Include="SubwayData.h" />

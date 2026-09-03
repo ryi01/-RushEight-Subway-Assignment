@@ -75,7 +75,7 @@ int SubwayCSVLoader::ParseTimeSec(const std::string& timeText)
         int min = std::stoi(minText) * 60;
         totalTime += min;
         // 문자열 제거
-        result = result.erase(minPos + std::string("분").size());
+        result.erase(0, minPos + std::string("분").size());
     }
     // 초 위치 찾기
     size_t secPos = result.find("초");
