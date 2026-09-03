@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 #include "StringUtil.h"
-#include "SubwayCSVLoader.h"
+#include "SubwayDataManager.h"
 
 int main()
 {
@@ -10,11 +10,11 @@ int main()
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
-    SubwayCSVLoader loader;
-    // CSV 파일을 읽고 데이터 목록 가져오기
-    std::vector<SubwayData> subwayDataList = loader.LoadCSV("Data/SubwayData.csv");
+    // 데이터 매니저 생성
+    SubwayDataManager dataManager;
+    if(!dataManager.InitializeSubwayData()) return -1;
 
-    std::cout << "로드된 데이터 개수 : " << subwayDataList.size() << std::endl;
+    return 0;
 }
 
 

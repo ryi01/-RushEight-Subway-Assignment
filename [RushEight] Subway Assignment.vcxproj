@@ -129,12 +129,14 @@
   <ItemGroup>
     <ClCompile Include="StringUtil.cpp" />
     <ClCompile Include="SubwayCSVLoader.cpp" />
+    <ClCompile Include="SubwayDataManager.cpp" />
     <ClCompile Include="[RushEight] Subway Assignment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="SubwayCSVLoader.h" />
     <ClInclude Include="SubwayData.h" />
+    <ClInclude Include="SubwayDataManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
