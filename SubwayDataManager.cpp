@@ -9,6 +9,8 @@ bool SubwayDataManager::InitializeSubwayData()
     // CSVLoaer 객체 생성 및 CSV 읽어오기
     SubwayCSVLoader loader;
     subwayDataList = loader.LoadCSV("Data/SubwayData.csv");
+
+    // 리스트가 비면 실패
     if (subwayDataList.empty()) return false;
 
     // 그래프 생성
@@ -19,6 +21,7 @@ bool SubwayDataManager::InitializeSubwayData()
 void SubwayDataManager::BuildGraph()
 {
     stationGraph.clear();
+
     for (const SubwayData& data : subwayDataList)
     {
         // from → to 등록
@@ -42,12 +45,12 @@ void SubwayDataManager::BuildGraph()
 }
 #pragma endregion
 
-// 데이터 조회
+// 데이터 조회 : 그래프 내에 station이 있는지 확인
 bool SubwayDataManager::HasStation(const std::string& station)
 {
     return stationGraph.find(station) != stationGraph.end();
 }
-// 그래프 getter함수
+// 그래프 getter 함수
 const std::map<std::string, std::vector<StationEdge>>& SubwayDataManager::GetStationGraph() const
 {
     return stationGraph;

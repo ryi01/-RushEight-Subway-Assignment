@@ -1,9 +1,10 @@
 ﻿#include "SubwayPathFinder.h"
 
-
+#pragma region 생성자
 SubwayPathFinder::SubwayPathFinder(const std::map<std::string, std::vector<StationEdge>>& graph) : stationGraph(graph)
 {
 }
+#pragma endregion
 
 // 다익스트라 알고리즘을 통해 가중치에 따른 최소 경로 찾기
 RouteResult SubwayPathFinder::FindShortRoute(const std::string& startStation, const std::string& endStation)
@@ -22,6 +23,7 @@ RouteResult SubwayPathFinder::FindShortRoute(const std::string& startStation, co
     std::map<std::string, int> prevLine;
 #pragma endregion
 
+    // 데이터 초기화
     InitData(subwayTimeData, visitedStation);
 
     // 출발지를 확인하고 소요시간을 0으로 변경
@@ -31,21 +33,24 @@ RouteResult SubwayPathFinder::FindShortRoute(const std::string& startStation, co
     std::string currentStationName;
     int minTime;
 
+    // 그래프를 전반적으로 돌며
     for (int i = 0; i < stationGraph.size(); i++)
     {
+        // 현재 역 및 최소 시간 초기화
         currentStationName.clear();
-        // 최소 시간
         minTime = std::numeric_limits<int>::max();
 
+        // 최소 시간 방문 갱신
         FindMinTimeStation(subwayTimeData, visitedStation, minTime, currentStationName);
 
         // 탐색할 수 있는 역이 없는 경우
         if (currentStationName.empty()) break;
-        // 방문 처리
+        // 현재역을 방문했다 처리
         visitedStation[currentStationName] = true;
-        // 목적지인 경우
+        // 현재역이 목적지인 경우
         if (currentStationName == endStation) break;
 
+        // 연결된 역 업데이트
         UpdateConnectedStations(currentStationName, startStation, subwayTimeData, prevStations, prevLine);
     }
 

@@ -22,26 +22,29 @@ std::vector<SubwayData> SubwayCSVLoader::LoadCSV(const std::string& filePath)
         return subwayDataList;
     }
 
+    // 문자열 공백 제거를 위한 stringUtil 객체
+    StringUtil util;
+
     std::string line;
+    // CSV 1행은 컬럼명이기에 건너뜀 
     std::getline(file, line);
+
     // csv 내부 파일 읽기
     while (std::getline(file, line))
     {
         // 한 줄을 stringstream에 담음
         std::stringstream ss(line);
 
-        // 한 줄을 분해해서 구조체에 담을 공간
+        // 한 행을 분해해서 구조체에 담을 공간
         std::string lineText;
         std::string fromStationText;
         std::string toStationText;
         std::string timeText;
-        // 한줄 분리
+        // 한 행 분리
         std::getline(ss, lineText, ',');
         std::getline(ss, fromStationText, ',');
         std::getline(ss, toStationText, ',');
         std::getline(ss, timeText, ',');
-        // 문자열 공백 제거를 위한 stringUtil 객체
-        StringUtil util;
         // subway 구조체
         SubwayData data;
         data.line = std::stoi(lineText);
