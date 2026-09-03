@@ -21,8 +21,9 @@ public:
     bool InitializeSubwayData();
     // 특정 역 데이터 조회
     bool HasStation(const std::string& station);
-    // 다익스트라 알고리즘 이용
-    RouteResult FindShortRoute(const std::string& startStation, const std::string& endStation);
+    // 그래프 getter
+    const std::map<std::string, std::vector<StationEdge>>& GetStationGraph() const;
+
 
 };
 

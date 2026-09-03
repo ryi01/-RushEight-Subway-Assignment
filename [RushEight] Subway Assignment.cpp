@@ -3,6 +3,7 @@
 
 #include "StringUtil.h"
 #include "SubwayDataManager.h"
+#include "SubwayPathFinder.h"
 
 #pragma region 입력 관련
 std::string InputStation(SubwayDataManager& manager, const std::string& message)
@@ -29,7 +30,6 @@ std::string InputStation(SubwayDataManager& manager, const std::string& message)
     return result;
 }
 #pragma endregion
-
 #pragma region 출력 관련
 void OutputRoute(const RouteResult& result)
 {
@@ -38,6 +38,7 @@ void OutputRoute(const RouteResult& result)
     {
         std::string text = result.route[i];
         std::cout << text;
+        // result 내에 있는 환승역을 확인 
         if(std::find(result.transferStations.begin(), result.transferStations.end(), text) != result.transferStations.end()) std::cout << "(환승)";
         if(i < result.route.size() - 1) std::cout << " -> ";
     }
@@ -58,6 +59,8 @@ int main()
     // 데이터 매니저 생성
     SubwayDataManager dataManager;
     if(!dataManager.InitializeSubwayData()) return -1;
+    // 경로 찾는 객체 생성
+    SubwayPathFinder pathFinder(dataManager.GetStationGraph());
 
 #pragma region 입력 관련
     std::string startStation;
@@ -76,16 +79,14 @@ int main()
         break;
     }
 #pragma endregion
-
 #pragma region 출력 관련
     // 출발역 -> 도착역 출력
     std::cout << "[탐색 결과] , " << startStation << " -> " << endStation << "\n";
     // 이동 경로 출력
-    RouteResult result = dataManager.FindShortRoute(startStation, endStation);
+    RouteResult result = pathFinder.FindShortRoute(startStation, endStation);
     OutputRoute(result);
     OutputTime(result);
 #pragma endregion
-
 
     return 0;
 }

@@ -130,6 +130,7 @@
     <ClCompile Include="StringUtil.cpp" />
     <ClCompile Include="SubwayCSVLoader.cpp" />
     <ClCompile Include="SubwayDataManager.cpp" />
+    <ClCompile Include="SubwayPathFinder.cpp" />
     <ClCompile Include="[RushEight] Subway Assignment.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="SubwayCSVLoader.h" />
     <ClInclude Include="SubwayData.h" />
     <ClInclude Include="SubwayDataManager.h" />
+    <ClInclude Include="SubwayPathFinder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

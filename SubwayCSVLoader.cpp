@@ -73,6 +73,7 @@ int SubwayCSVLoader::ParseTimeSec(const std::string& timeText)
         std::string minText = result.substr(0, minPos);
         // 분계산
         int min = std::stoi(minText) * 60;
+        // 전체 시간에 추가
         totalTime += min;
         // 문자열 제거
         result.erase(0, minPos + std::string("분").size());
