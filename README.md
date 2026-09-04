@@ -74,7 +74,8 @@ BFS는 이동시간 가중치를 반영하지 못했기에
 ## BFS와 다익스트라 알고리즘 결과 비교
 ### BFS 적용 결과
 <img width="707" height="342" alt="image" src="https://github.com/user-attachments/assets/60564051-98eb-4462-8832-9e113dcbdce2" />
-### Dijkstra 적용 결과
+
+### 다익스트라 적용 결과
 <img width="691" height="307" alt="image" src="https://github.com/user-attachments/assets/7bac5de2-0137-40d2-af66-00e667618a05" />
 
 ---
