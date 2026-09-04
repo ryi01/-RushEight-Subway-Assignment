@@ -91,7 +91,6 @@ int SubwayCSVLoader::ParseTimeSec(const std::string& timeText)
         // int로 변환해서 넣기
         totalTime += std::stoi(secText);
     }
-    
     return totalTime;
 }
 #pragma endregion

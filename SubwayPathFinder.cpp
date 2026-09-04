@@ -24,7 +24,7 @@ RouteResult SubwayPathFinder::FindShortRoute(const std::string& startStation, co
 #pragma endregion
 
     // 데이터 초기화
-    InitData(subwayTimeData, visitedStation);
+    InitPathSearchData(subwayTimeData, visitedStation);
 
     // 출발지를 확인하고 소요시간을 0으로 변경
     subwayTimeData[startStation] = 0;
@@ -62,9 +62,8 @@ RouteResult SubwayPathFinder::FindShortRoute(const std::string& startStation, co
     return result;
 }
 
-// 데이터 초기화 함수
-
-void SubwayPathFinder::InitData(std::map<std::string, int>& subwayTimeData, std::map<std::string, bool>& visitedStation)
+// 경로 탐색용 데이터 초기화
+void SubwayPathFinder::InitPathSearchData(std::map<std::string, int>& subwayTimeData, std::map<std::string, bool>& visitedStation)
 {
     // 전체 map을 INF로 초기화
     for (const auto& data : stationGraph)
@@ -99,7 +98,7 @@ void SubwayPathFinder::UpdateConnectedStations(const std::string& currentStation
         int time = subwayTimeData[currentStationName] + edge.timeToSec;
 
         // 출발지가 아니고 기존 호선과 다음 호선이 다르면 환승시간 추가
-        if (currentStationName != startStation && prevLine[currentStationName] != edge.line) time += (3 * 60);
+        if (currentStationName != startStation && prevLine[currentStationName] != edge.line) time += transferTimeSec;
 
         // 원래 시간과 계산된 시간 비교
         if (time < subwayTimeData[edge.stationName])

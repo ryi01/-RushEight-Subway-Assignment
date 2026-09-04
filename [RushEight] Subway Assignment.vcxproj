@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="StringUtil.cpp" />
+    <ClCompile Include="SubwayConsoleView.cpp" />
     <ClCompile Include="SubwayCSVLoader.cpp" />
     <ClCompile Include="SubwayDataManager.cpp" />
     <ClCompile Include="SubwayPathFinder.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="RouteResult.h" />
     <ClInclude Include="StationEdge.h" />
     <ClInclude Include="StringUtil.h" />
+    <ClInclude Include="SubwayConsoleView.h" />
     <ClInclude Include="SubwayCSVLoader.h" />
     <ClInclude Include="SubwayData.h" />
     <ClInclude Include="SubwayDataManager.h" />
